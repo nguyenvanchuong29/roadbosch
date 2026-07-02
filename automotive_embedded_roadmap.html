@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automotive Embedded Roadmap — Bosch BGSV Ready</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Literata:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2430;
+    --accent: #e8b14a;
+    --accent2: #4a90e8;
+    --accent3: #4ae8a0;
+    --accent4: #e84a6a;
+    --text: #c8cdd8;
+    --text-bright: #edf0f7;
+    --text-dim: #5a6278;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Literata', Georgia, serif;
+    line-height: 1.75;
+    font-size: 15px;
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 80px 40px 60px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #0a0c10 0%, #0d1018 40%, #0a1020 100%);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(232,177,74,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -60px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(74,144,232,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    opacity: 0.9;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 800;
+    color: var(--text-bright);
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    font-family: 'Literata', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+  .hero-sub-vi {
+    font-family: 'Literata', serif;
+    font-size: 14px;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin-bottom: 36px;
+    opacity: 0.7;
+  }
+  .hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .nav-strip {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    scrollbar-width: none;
+  }
+  .nav-strip::-webkit-scrollbar { display: none; }
+  .nav-item {
+    padding: 14px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: block;
+  }
+  .nav-item:hover { color: var(--text-bright); border-bottom-color: var(--accent); }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 40px; }
+
+  .intro-banner {
+    background: linear-gradient(135deg, #1a1508, #0e1420);
+    border: 1px solid rgba(232,177,74,0.25);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 40px 0;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .intro-banner .icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .intro-banner h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .section-title-vi {
+    font-family: 'Literata', serif;
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  .phase-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 32px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .phase-card:hover { border-color: rgba(232,177,74,0.3); }
+
+  .phase-header {
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .phase-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    flex-shrink: 0;
+  }
+  .phase-header-text h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 2px;
+  }
+  .phase-header-text .en { font-size: 13px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+  .phase-header-text .vi { font-size: 12px; color: var(--text-dim); font-style: italic; }
+  .phase-duration {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .phase-duration strong { display: block; font-size: 16px; color: var(--text-bright); }
+
+  .phase-body {
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 640px) {
+    .phase-body { grid-template-columns: 1fr; }
+    .container { padding: 0 20px; }
+    .hero { padding: 60px 20px 48px; }
+  }
+
+  .topic-group h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topic-group h4::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .topic-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .topic-list li {
+    font-size: 13.5px;
+    color: var(--text);
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .topic-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+    font-size: 11px;
+    top: 1px;
+  }
+  .topic-list li .vi {
+    display: block;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 1px;
+  }
+
+  .phase-resources {
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    padding: 18px 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  .resource-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-right: 4px;
+  }
+  .resource-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .phase-project {
+    background: linear-gradient(135deg, #0d120a, #0a100d);
+    border: 1px solid rgba(74,232,160,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 0 28px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .phase-project .proj-icon { font-size: 18px; flex-shrink: 0; }
+  .phase-project h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent3);
+    margin-bottom: 4px;
+  }
+  .phase-project p { font-size: 12.5px; color: var(--text); }
+
+  .p1 .phase-num { background: rgba(232,177,74,0.12); color: #e8b14a; }
+  .p1 .topic-group h4 { color: #e8b14a; }
+  .p2 .phase-num { background: rgba(74,144,232,0.12); color: #4a90e8; }
+  .p2 .topic-group h4 { color: #4a90e8; }
+  .p3 .phase-num { background: rgba(74,232,160,0.12); color: #4ae8a0; }
+  .p3 .topic-group h4 { color: #4ae8a0; }
+  .p4 .phase-num { background: rgba(232,74,106,0.12); color: #e84a6a; }
+  .p4 .topic-group h4 { color: #e84a6a; }
+  .p5 .phase-num { background: rgba(180,74,232,0.12); color: #b44ae8; }
+  .p5 .topic-group h4 { color: #b44ae8; }
+  .p6 .phase-num { background: rgba(232,114,74,0.12); color: #e8724a; }
+  .p6 .topic-group h4 { color: #e8724a; }
+
+  .timeline-bar {
+    display: flex;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 12px;
+    margin: 24px 0;
+    gap: 2px;
+  }
+  .tl-seg { flex: 1; border-radius: 4px; }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .proj-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .proj-card:hover { border-color: rgba(74,232,160,0.35); transform: translateY(-2px); }
+  .proj-card .proj-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .proj-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+  }
+  .proj-card .proj-vi {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .proj-card p { font-size: 13px; color: var(--text); margin-bottom: 14px; line-height: 1.55; }
+  .proj-card .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .proj-card .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .proj-card .cv-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(74,232,160,0.1);
+    border: 1px solid rgba(74,232,160,0.25);
+    color: var(--accent3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .book-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .book-card .book-cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .book-card h4 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
+  .book-card .author { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-bottom: 8px; }
+  .book-card p { font-size: 12.5px; color: var(--text); line-height: 1.55; }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .tool-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .tool-item h4 { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: var(--accent); margin-bottom: 4px; }
+  .tool-item .tool-vi { font-size: 11px; color: var(--text-dim); font-style: italic; margin-bottom: 4px; }
+  .tool-item p { font-size: 12px; color: var(--text-dim); }
+
+  .tip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+  @media (max-width: 640px) { .tip-grid { grid-template-columns: 1fr; } }
+  .tip-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .tip-card h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
+  .tip-card .tip-vi { font-size: 11px; color: var(--text-dim); font-style: italic; margin-bottom: 8px; }
+  .tip-card p { font-size: 13px; color: var(--text); }
+
+  footer { padding: 48px 40px; border-top: 1px solid var(--border); text-align: center; }
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+  footer strong { color: var(--accent); }
+
+  .quote-block {
+    border-left: 3px solid var(--accent2);
+    padding: 16px 20px;
+    margin: 20px 0;
+    background: rgba(74,144,232,0.05);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  .checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .checklist li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text); }
+  .checklist li::before { content: '◻'; color: var(--accent); flex-shrink: 0; font-size: 12px; margin-top: 2px; }
+  .checklist li .vi { display: block; font-size: 12px; color: var(--text-dim); font-style: italic; }
+
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .highlight {
+    background: rgba(232,177,74,0.1);
+    border: 1px solid rgba(232,177,74,0.2);
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  .important-box {
+    background: rgba(232,74,106,0.06);
+    border: 1px solid rgba(232,74,106,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .important-box h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #e84a6a;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .new-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(74,232,160,0.15);
+    border: 1px solid rgba(74,232,160,0.3);
+    color: var(--accent3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-tag">▸ Roadmap · Automotive Embedded · Bosch BGSV Ready · Updated from real job postings</div>
+    <h1>Automotive<br><span>Embedded</span> Roadmap</h1>
+    <p class="hero-sub">From zero to Bosch-ready — learn deep, learn right, build things that work.</p>
+    <p class="hero-sub-vi">Từ zero đến Bosch-ready — học chắc, học đúng, xây dự án thực tế.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">18</span><span class="stat-label">months / tháng</span></div>
+      <div class="stat"><span class="stat-num">6</span><span class="stat-label">phases / giai đoạn</span></div>
+      <div class="stat"><span class="stat-num">8+</span><span class="stat-label">CV projects / dự án</span></div>
+      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">patience / kiên nhẫn</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-strip">
+  <a class="nav-item" href="#intro">Philosophy / Triết lý</a>
+  <a class="nav-item" href="#roadmap">Roadmap / Lộ trình</a>
+  <a class="nav-item" href="#projects">CV Projects / Dự án</a>
+  <a class="nav-item" href="#books">Books & Docs / Sách</a>
+  <a class="nav-item" href="#tools">Tools / Công cụ</a>
+  <a class="nav-item" href="#tips">Tips</a>
+</nav>
+
+<!-- INTRO -->
+<div id="intro" class="container">
+  <div class="intro-banner">
+    <div class="icon">⚠️</div>
+    <div>
+      <h3>Read before starting — Philosophy / Đọc trước khi bắt đầu</h3>
+      <p><strong>Depth over breadth.</strong> Each phase must be understood well enough to explain to someone else before moving on. Bosch does not need people who know many things shallowly — they need people who understand C deeply, know how an ECU truly works, and can contribute from day one of internship. One well-done project on GitHub is worth more than 10 Udemy certificates.<br>
+      <em>Chiều sâu hơn chiều rộng. Mỗi phase phải nắm chắc đến mức giải thích được cho người khác mới chuyển tiếp.</em></p>
+      <br>
+      <p><strong>English from day one.</strong> All code comments, variable names, README files, and commit messages must be written in English. Bosch BGSV works entirely in English. Start this habit now, not later.<br>
+      <em>Tiếng Anh từ ngày đầu. Mọi comment, tên biến, README, commit message phải viết bằng tiếng Anh. Bosch làm việc hoàn toàn bằng tiếng Anh.</em></p>
+      <br>
+      <p><strong>Testing is not the last step.</strong> Based on real Bosch job postings, testing (unit, integration, SIL, HIL) is core work at BGSV — not a final phase. Write tests from Phase 1 onward.<br>
+      <em>Testing không phải bước cuối. Theo job posting thực tế tại Bosch BGSV, testing là công việc cốt lõi — không phải giai đoạn cuối. Viết test từ Phase 1.</em></p>
+    </div>
+  </div>
+
+  <div style="margin: 8px 0 4px;">
+    <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim);">18-month overview / Tổng quan 18 tháng</span>
+  </div>
+  <div class="timeline-bar">
+    <div class="tl-seg" style="background:#e8b14a; flex:2" title="Phase 1: C Foundation"></div>
+    <div class="tl-seg" style="background:#4a90e8; flex:3" title="Phase 2: Bare-metal STM32"></div>
+    <div class="tl-seg" style="background:#4ae8a0; flex:3" title="Phase 3: Automotive Protocols + Python"></div>
+    <div class="tl-seg" style="background:#e84a6a; flex:3" title="Phase 4: RTOS + C++ + CI/CD"></div>
+    <div class="tl-seg" style="background:#b44ae8; flex:3" title="Phase 5: AUTOSAR Classic"></div>
+    <div class="tl-seg" style="background:#e8724a; flex:4" title="Phase 6: Bosch-Specific Prep"></div>
+  </div>
+  <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom: 16px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e8b14a;">■ P1: 2m</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4a90e8;">■ P2: 3m</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4ae8a0;">■ P3: 3m</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e84a6a;">■ P4: 3m</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#b44ae8;">■ P5: 3m</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e8724a;">■ P6: 4m</span>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div id="roadmap" class="container">
+<div class="section">
+  <div class="section-label">Core curriculum</div>
+  <div class="section-title">6-Phase Roadmap</div>
+  <div class="section-title-vi">Lộ Trình 6 Giai Đoạn</div>
+
+  <!-- PHASE 1 -->
+  <div class="phase-card p1">
+    <div class="phase-header">
+      <div class="phase-num">Phase 01</div>
+      <div class="phase-header-text">
+        <h2>🧱 C Foundation &amp; Computer Architecture</h2>
+        <div class="en">The pillar that holds everything — if C is shaky, everything after will collapse</div>
+        <div class="vi">Nền tảng C &amp; Kiến trúc máy tính — Trụ cột không thể thiếu</div>
+      </div>
+      <div class="phase-duration"><strong>2 months</strong>Month 1–2</div>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <h4>C Programming Mastery</h4>
+        <ul class="topic-list">
+          <li>Pointers, pointer-to-pointer, function pointers<span class="vi">Con trỏ, con trỏ đến con trỏ, con trỏ hàm</span></li>
+          <li>Memory layout: stack, heap, BSS, data, text segment<span class="vi">Bộ nhớ: stack, heap, BSS, data, text</span></li>
+          <li>Bit manipulation: masking, shifting, set/clear/toggle<span class="vi">Thao tác bit: masking, dịch bit, set/clear</span></li>
+          <li>struct, union, bitfield — used in MCU register maps<span class="vi">struct, union, bitfield — dùng trong register map MCU</span></li>
+          <li>volatile, const, static, extern — real embedded meaning<span class="vi">volatile, const, static, extern — ý nghĩa thực tế embedded</span></li>
+          <li>Preprocessor macros, header guard, conditional compile<span class="vi">Macro tiền xử lý, header guard</span></li>
+          <li>Endianness (big/little) — critical for protocols<span class="vi">Endianness — cực quan trọng trong protocol</span></li>
+          <li>Data types: uint8_t, uint16_t, uint32_t — always use these<span class="vi">Kiểu dữ liệu cố định — dùng luôn thay int</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>Computer Architecture &amp; Habits</h4>
+        <ul class="topic-list">
+          <li>CPU pipeline, registers, ALU basics<span class="vi">Pipeline CPU, thanh ghi, ALU cơ bản</span></li>
+          <li>Harvard vs Von Neumann architecture<span class="vi">Kiến trúc Harvard vs Von Neumann</span></li>
+          <li>ARM Cortex-M: pipeline, exception model, NVIC<span class="vi">ARM Cortex-M: pipeline, model ngoại lệ, NVIC</span></li>
+          <li>Interrupt: hardware, software, priority, nesting<span class="vi">Ngắt: phần cứng, phần mềm, ưu tiên, lồng nhau</span></li>
+          <li>Assembly basics — read it, no need to write<span class="vi">Assembly cơ bản — đọc được là đủ</span></li>
+          <li><strong>English habit:</strong> all code in English from now on<span class="vi">Thói quen tiếng Anh: toàn bộ code viết bằng tiếng Anh</span></li>
+          <li><strong>MISRA-C awareness:</strong> rule 1.1, 8.1, 10.1, 14.4, 15.5<span class="vi">Nhận biết MISRA-C: 5 quy tắc cơ bản nhất</span></li>
+          <li>Unit test with assert() — test every function you write<span class="vi">Unit test với assert() — test mọi hàm bạn viết</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-project">
+      <div class="proj-icon">🔬</div>
+      <div>
+        <h5>Mini Project: Bitfield Register Simulator</h5>
+        <p>Write a C program simulating an MCU register (GPIO, UART) using struct + bitfield + macro. All code and comments in English. Add 5 unit tests using assert(). Push to GitHub with English README.<br>
+        <em>Viết chương trình C mô phỏng register MCU bằng struct + bitfield + macro. Toàn bộ bằng tiếng Anh. Thêm 5 unit test. Push GitHub có README tiếng Anh.</em></p>
+      </div>
+    </div>
+    <div class="phase-resources">
+      <span class="resource-label">Learn from:</span>
+      <span class="resource-tag">📘 "C Programming: A Modern Approach" – K.N. King</span>
+      <span class="resource-tag">📘 "Expert C Programming" – Peter van der Linden</span>
+      <span class="resource-tag">🎥 CS50x – Harvard (free)</span>
+      <span class="resource-tag">🌐 godbolt.org – see your C compile to assembly</span>
+      <span class="resource-tag">🌐 embetronicx.com/tutorials/c</span>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-card p2">
+    <div class="phase-header">
+      <div class="phase-num">Phase 02</div>
+      <div class="phase-header-text">
+        <h2>⚙️ Bare-Metal Embedded with STM32</h2>
+        <div class="en">Own the hardware without a framework — this separates you from Arduino developers</div>
+        <div class="vi">Lập trình nhúng Bare-Metal với STM32 — điểm phân biệt với người học Arduino</div>
+      </div>
+      <div class="phase-duration"><strong>3 months</strong>Month 3–5</div>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <h4>STM32 Register-Level Programming</h4>
+        <ul class="topic-list">
+          <li>Read Reference Manual &amp; Datasheet — mandatory skill<span class="vi">Đọc Reference Manual &amp; Datasheet — kỹ năng bắt buộc</span></li>
+          <li>GPIO: input/output, pull-up/down, alternate function<span class="vi">GPIO: vào/ra, pull-up/down, alternate function</span></li>
+          <li>Clock system: RCC, PLL, AHB/APB — configure from registers<span class="vi">Hệ thống clock: RCC, PLL, AHB/APB — cấu hình từ thanh ghi</span></li>
+          <li>UART: polling → interrupt-driven → DMA<span class="vi">UART: polling → interrupt → DMA</span></li>
+          <li>SPI &amp; I2C: master/slave, clock polarity/phase<span class="vi">SPI &amp; I2C: master/slave, clock polarity/phase</span></li>
+          <li>Timer: basic, PWM, input capture<span class="vi">Timer: cơ bản, PWM, input capture</span></li>
+          <li>ADC &amp; DMA — peripheral to memory transfers<span class="vi">ADC &amp; DMA — truyền dữ liệu peripheral sang memory</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>Low-Level Essentials + First Python Touch</h4>
+        <ul class="topic-list">
+          <li>Startup code &amp; linker script from scratch<span class="vi">Viết startup code, linker script từ đầu</span></li>
+          <li>Interrupt handler: NVIC setup, write ISR correctly<span class="vi">Interrupt handler: setup NVIC, viết ISR đúng cách</span></li>
+          <li>Bootloader basics: flash, jump to application<span class="vi">Bootloader cơ bản: flash, nhảy vào application</span></li>
+          <li>Debug with GDB + OpenOCD + SWD<span class="vi">Debug với GDB + OpenOCD + SWD</span></li>
+          <li>MISRA-C:2012 — essential rules applied in every file<span class="vi">MISRA-C:2012 — áp dụng vào mọi file code</span></li>
+          <li>Makefile basics — build without IDE dependency<span class="vi">Makefile cơ bản — build không phụ thuộc IDE</span></li>
+          <li><strong>Python + pyserial:</strong> read STM32 UART output from PC <span class="new-badge">new</span><span class="vi">Python + pyserial: đọc output UART từ PC — Python đầu tiên</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-project">
+      <div class="proj-icon">🏗️</div>
+      <div>
+        <h5>Project: Digital Dashboard Sensor Reader</h5>
+        <p>Read temperature sensor (I2C) + LED PWM dimming + UART debug log — all from registers, <strong>no HAL</strong>. Write a Python script using pyserial to read and display UART data on PC. Push to GitHub with English README.<br>
+        <em>Đọc sensor nhiệt độ (I2C) + LED PWM + UART log — từ thanh ghi, không dùng HAL. Viết Python script đọc UART trên PC. GitHub README tiếng Anh.</em></p>
+      </div>
+    </div>
+    <div class="phase-resources">
+      <span class="resource-label">Learn from:</span>
+      <span class="resource-tag">📘 "Mastering STM32" – Carmine Noviello (free PDF)</span>
+      <span class="resource-tag">📘 "Definitive Guide to ARM Cortex-M3/M4" – Joseph Yiu</span>
+      <span class="resource-tag">🎥 FastBit Embedded Brain Academy (Udemy)</span>
+      <span class="resource-tag">📄 STM32F4 Reference Manual – st.com (free)</span>
+      <span class="resource-tag">🌐 embetronicx.com/tutorials/microcontrollers/stm32</span>
+      <span class="resource-tag">🐍 pyserial docs – pyserial.readthedocs.io</span>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-card p3">
+    <div class="phase-header">
+      <div class="phase-num">Phase 03</div>
+      <div class="phase-header-text">
+        <h2>🚗 Automotive Protocols + Python Testing</h2>
+        <div class="en">The language cars speak — CAN is the backbone, UDS is the diagnostic layer</div>
+        <div class="vi">Giao thức ô tô + Python Testing — CAN là trái tim, UDS là bác sĩ</div>
+      </div>
+      <div class="phase-duration"><strong>3 months</strong>Month 6–8</div>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <h4>CAN Bus — Priority #1</h4>
+        <ul class="topic-list">
+          <li>CAN 2.0A/B: frame structure, arbitration, error handling<span class="vi">CAN 2.0A/B: cấu trúc frame, arbitration, xử lý lỗi</span></li>
+          <li>Bit timing: prescaler, segment, sync — calculate baud rate<span class="vi">Bit timing: tính toán baud rate</span></li>
+          <li>CAN error states: active, passive, bus-off<span class="vi">Trạng thái lỗi CAN: active, passive, bus-off</span></li>
+          <li>CAN FD: why it exists, how frame differs from 2.0<span class="vi">CAN FD: tại sao tồn tại, frame khác gì 2.0</span></li>
+          <li>STM32 CAN: filter, mailbox, FIFO implementation<span class="vi">CAN trên STM32: filter, mailbox, FIFO</span></li>
+          <li>.dbc file format — read, parse signals<span class="vi">File .dbc — đọc và parse signal</span></li>
+          <li><strong>python-can:</strong> send/receive CAN frames from PC <span class="new-badge">new</span><span class="vi">python-can: gửi/nhận CAN frame từ PC</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>UDS, LIN &amp; Other Protocols</h4>
+        <ul class="topic-list">
+          <li>UDS (ISO 14229): 0x10, 0x11, 0x22, 0x27, 0x2E, 0x31, 0x34–0x37<span class="vi">UDS: các service chẩn đoán quan trọng</span></li>
+          <li>ISO-TP (ISO 15765-2): segmented messaging<span class="vi">ISO-TP: nhắn tin phân đoạn</span></li>
+          <li>LIN protocol: master/slave schedule, checksum<span class="vi">LIN: master/slave, checksum</span></li>
+          <li>Automotive Ethernet: SOME/IP basics, DoIP awareness <span class="new-badge">new</span><span class="vi">Ethernet ô tô: SOME/IP cơ bản, DoIP</span></li>
+          <li><strong>python-uds:</strong> test UDS server from PC <span class="new-badge">new</span><span class="vi">python-uds: test UDS server từ PC</span></li>
+          <li><strong>cantools:</strong> parse .dbc in Python <span class="new-badge">new</span><span class="vi">cantools: parse .dbc bằng Python</span></li>
+          <li>CAPL scripting basics (used in CANoe testing)<span class="vi">CAPL cơ bản — dùng trong test với CANoe</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-project">
+      <div class="proj-icon">📡</div>
+      <div>
+        <h5>Project: CAN Bus Data Logger + Python Analyzer</h5>
+        <p>STM32 receives CAN frames (from OBD-II or 2 STM32 nodes), parses .dbc signals, logs via UART. Python companion tool uses python-can + cantools to visualize data in real-time. UDS server responds to 0x22 (ReadDataByIdentifier). <strong>This is the most impressive project for Bosch.</strong><br>
+        <em>STM32 nhận CAN frame, parse .dbc, log UART. Python tool dùng python-can + cantools để visualize. UDS server respond 0x22.</em></p>
+      </div>
+    </div>
+    <div class="phase-resources">
+      <span class="resource-label">Learn from:</span>
+      <span class="resource-tag">📘 "A Comprehensible Guide to CAN" – Pfeiffer</span>
+      <span class="resource-tag">🌐 CSS Electronics – CAN Bus Explained (free)</span>
+      <span class="resource-tag">🐍 python-can – python-can.readthedocs.io</span>
+      <span class="resource-tag">🐍 cantools – cantools.readthedocs.io</span>
+      <span class="resource-tag">🎥 Emteria Academy – CAN Protocol (YouTube)</span>
+      <span class="resource-tag">📄 ISO 11898 – CAN standard</span>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase-card p4">
+    <div class="phase-header">
+      <div class="phase-num">Phase 04</div>
+      <div class="phase-header-text">
+        <h2>⏱️ RTOS + C++ Basics + CI/CD</h2>
+        <div class="en">Real-time thinking + modern tools — mandatory for any serious ECU software</div>
+        <div class="vi">RTOS + C++ cơ bản + CI/CD — bắt buộc với ECU phần mềm nghiêm túc</div>
+      </div>
+      <div class="phase-duration"><strong>3 months</strong>Month 9–11</div>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <h4>FreeRTOS</h4>
+        <ul class="topic-list">
+          <li>Task, scheduler, priority, preemption<span class="vi">Task, scheduler, priority, preemption</span></li>
+          <li>Semaphore, mutex, event group<span class="vi">Semaphore, mutex, event group</span></li>
+          <li>Queue, stream buffer, message buffer<span class="vi">Queue, stream buffer, message buffer</span></li>
+          <li>Software timer, tickless idle<span class="vi">Timer phần mềm, tickless idle</span></li>
+          <li>Interrupt-safe API: FromISR functions<span class="vi">API an toàn cho interrupt: hàm FromISR</span></li>
+          <li>Deadlock, priority inversion — detect and fix<span class="vi">Deadlock, priority inversion — nhận biết và xử lý</span></li>
+          <li>State machine: flat FSM, hierarchical HSM<span class="vi">State machine: FSM phẳng, HSM phân cấp</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>C++ Basics + CI/CD <span class="new-badge">new</span></h4>
+        <ul class="topic-list">
+          <li><strong>C++ for embedded:</strong> class, constructor, destructor<span class="vi">C++ cho embedded: class, constructor, destructor</span></li>
+          <li>Inheritance, virtual functions, abstract class<span class="vi">Kế thừa, hàm ảo, abstract class</span></li>
+          <li>RAII — Resource Acquisition Is Initialization<span class="vi">RAII — quản lý tài nguyên qua constructor/destructor</span></li>
+          <li>Namespaces, references — avoid dynamic memory<span class="vi">Namespace, reference — tránh dynamic memory</span></li>
+          <li><strong>Unit testing:</strong> Unity framework — test every module<span class="vi">Unit test với Unity — test mọi module</span></li>
+          <li><strong>GitHub Actions:</strong> auto-build on every git push <span class="new-badge">new</span><span class="vi">GitHub Actions: tự động build khi push code</span></li>
+          <li>Code coverage with gcov — target &gt;70%<span class="vi">Coverage với gcov — mục tiêu &gt;70%</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-project">
+      <div class="proj-icon">🔄</div>
+      <div>
+        <h5>Project: Multi-ECU Vehicle Simulator</h5>
+        <p>2–3 STM32 boards communicate over CAN. Each board runs FreeRTOS simulating 1 ECU (body control, engine, dashboard). State machine manages system state. Some modules written in C++. Unity unit tests included. GitHub Actions pipeline auto-builds and runs tests.<br>
+        <em>2–3 STM32 giao tiếp CAN, mỗi board FreeRTOS mô phỏng 1 ECU. State machine. Một số module viết bằng C++. Unity test. GitHub Actions build tự động.</em></p>
+      </div>
+    </div>
+    <div class="phase-resources">
+      <span class="resource-label">Learn from:</span>
+      <span class="resource-tag">📘 "Mastering FreeRTOS Kernel" – Richard Barry (free PDF)</span>
+      <span class="resource-tag">📘 "Making Embedded Systems" – Elecia White</span>
+      <span class="resource-tag">🎥 Shawn Hymel – FreeRTOS Series (YouTube)</span>
+      <span class="resource-tag">📘 "Effective Modern C++" – Scott Meyers (C++ chapters)</span>
+      <span class="resource-tag">🌐 docs.github.com/actions</span>
+      <span class="resource-tag">🌐 throwtheswitch.org/unity</span>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase-card p5">
+    <div class="phase-header">
+      <div class="phase-num">Phase 05</div>
+      <div class="phase-header-text">
+        <h2>🏗️ AUTOSAR Classic</h2>
+        <div class="en">The gold standard of automotive software — Bosch uses ETAS RTA-CAR and ETAS ISOLAR daily</div>
+        <div class="vi">Tiêu chuẩn vàng của ngành — Bosch dùng ETAS RTA-CAR và ETAS ISOLAR hàng ngày</div>
+      </div>
+      <div class="phase-duration"><strong>3 months</strong>Month 12–14</div>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <h4>AUTOSAR Classic Architecture</h4>
+        <ul class="topic-list">
+          <li>Layered architecture: Application → RTE → BSW → MCAL<span class="vi">Kiến trúc phân lớp: Application → RTE → BSW → MCAL</span></li>
+          <li>SWC: Atomic, Composition, Service — ports and interfaces<span class="vi">SWC: Atomic, Composition, Service — cổng và giao diện</span></li>
+          <li>Runnable, P-port, R-port, Sender-Receiver, Client-Server<span class="vi">Runnable, P-port, R-port, Sender-Receiver</span></li>
+          <li>BSW modules: Com, PduR, CanIf, CanSm, Dcm, Dem, NvM<span class="vi">Các module BSW quan trọng</span></li>
+          <li>MCAL: CanDrv, Dio, Adc, Spi per AUTOSAR spec<span class="vi">MCAL: driver theo spec AUTOSAR</span></li>
+          <li>ARXML: read, understand, <strong>author your own</strong> <span class="new-badge">new</span><span class="vi">ARXML: đọc, hiểu, và TỰ VIẾT ARXML</span></li>
+          <li>RTE generation: understand what the tool produces<span class="vi">Sinh RTE: hiểu tool sinh ra gì</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>Tools, Standards &amp; Process <span class="new-badge">updated</span></h4>
+        <ul class="topic-list">
+          <li><strong>ETAS ISOLAR-A:</strong> SWC design, ARXML editing (free trial)<span class="vi">ETAS ISOLAR-A: thiết kế SWC, chỉnh ARXML</span></li>
+          <li><strong>ETAS RTA-CAR:</strong> Bosch's own AUTOSAR BSW runtime <span class="new-badge">new</span><span class="vi">ETAS RTA-CAR: runtime AUTOSAR BSW của chính Bosch</span></li>
+          <li><strong>Vector DaVinci Developer:</strong> AUTOSAR tool at Bosch<span class="vi">Vector DaVinci: tool AUTOSAR Bosch dùng song song</span></li>
+          <li>ASPICE Level 2: work products, traceability, reviews <span class="new-badge">new</span><span class="vi">ASPICE Level 2: work products, traceability, review</span></li>
+          <li><strong>Jenkins / GitLab CI:</strong> CI/CD at Bosch level <span class="new-badge">new</span><span class="vi">Jenkins / GitLab CI: CI/CD cấp độ Bosch</span></li>
+          <li>ISO 26262: ASIL levels, functional safety basics<span class="vi">ISO 26262: ASIL, an toàn chức năng cơ bản</span></li>
+          <li>SecOC awareness (ISO/SAE 21434 cybersecurity) <span class="new-badge">new</span><span class="vi">SecOC — ý thức về cybersecurity ô tô</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-project">
+      <div class="proj-icon">🛡️</div>
+      <div>
+        <h5>Project: AUTOSAR-Inspired BSW Module (C &amp; C++)</h5>
+        <p>Implement a BSW module (e.g., CAN Interface layer) following AUTOSAR spec API — function naming, data types, error codes. Write ARXML description. Add unit tests + Jenkins pipeline that runs them automatically. Very impressive on a CV.<br>
+        <em>Implement module BSW (CAN Interface) theo AUTOSAR spec API. Viết ARXML mô tả. Thêm unit test + Jenkins pipeline chạy test tự động.</em></p>
+      </div>
+    </div>
+    <div class="phase-resources">
+      <span class="resource-label">Learn from:</span>
+      <span class="resource-tag">🌐 embetronicx.com/tutorials/automotive/autosar</span>
+      <span class="resource-tag">📄 autosar.org – free specs (register as partner)</span>
+      <span class="resource-tag">🎥 "Learn AUTOSAR from Scratch" – Shyam Bhat (Udemy)</span>
+      <span class="resource-tag">🌐 etas.com – ISOLAR-A + RTA-CAR trial</span>
+      <span class="resource-tag">🌐 jenkins.io/doc – Jenkins CI/CD docs</span>
+      <span class="resource-tag">📄 ASPICE PAM 3.1 – free download</span>
+    </div>
+  </div>
+
+  <!-- PHASE 6 -->
+  <div class="phase-card p6">
+    <div class="phase-header">
+      <div class="phase-num">Phase 06</div>
+      <div class="phase-header-text">
+        <h2>🎯 Specialization &amp; Bosch BGSV Ready</h2>
+        <div class="en">Integration phase — build portfolio, master testing, prepare for Bosch BGSV interview</div>
+        <div class="vi">Giai đoạn tích hợp — xây portfolio, thành thạo testing, chuẩn bị phỏng vấn</div>
+      </div>
+      <div class="phase-duration"><strong>4 months</strong>Month 15–18</div>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <h4>Testing &amp; Validation — Bosch's Core Work</h4>
+        <ul class="topic-list">
+          <li>SIL (Software-in-the-Loop): test without hardware<span class="vi">SIL: test phần mềm không cần hardware</span></li>
+          <li>HIL (Hardware-in-the-Loop): concept, setup, real usage<span class="vi">HIL: khái niệm, setup, cách dùng thực tế</span></li>
+          <li>Unit test: Unity + CMock + code coverage (gcov/lcov)<span class="vi">Unit test: Unity + CMock + coverage</span></li>
+          <li>Integration test: test AUTOSAR component interactions<span class="vi">Integration test: test tương tác AUTOSAR</span></li>
+          <li>Regression testing: verify nothing breaks on updates<span class="vi">Regression test: xác nhận update không phá gì</span></li>
+          <li><strong>Python test automation:</strong> pytest + python-can for CAN testing <span class="new-badge">new</span><span class="vi">Python test automation: pytest + python-can</span></li>
+          <li>Static analysis: PC-lint Plus, MISRA checker<span class="vi">Phân tích tĩnh: PC-lint Plus, MISRA checker</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>Portfolio &amp; Interview Preparation</h4>
+        <ul class="topic-list">
+          <li>Polish 4+ GitHub projects: English README, clean code, tests<span class="vi">Hoàn thiện 4+ dự án GitHub: README tiếng Anh, code sạch, test</span></li>
+          <li>Write technical blog/doc explaining your architecture<span class="vi">Viết blog/doc giải thích kiến trúc dự án</span></li>
+          <li>Technical interview prep: C pointers, race condition, CAN, AUTOSAR<span class="vi">Luyện phỏng vấn kỹ thuật bằng tiếng Anh</span></li>
+          <li>Practice explaining every project in English<span class="vi">Tập trình bày mọi dự án bằng tiếng Anh</span></li>
+          <li>Follow Bosch BGSV Vietnam LinkedIn &amp; careers page<span class="vi">Theo dõi LinkedIn và trang tuyển dụng Bosch BGSV</span></li>
+          <li>Network: connect with Bosch BGSV engineers on LinkedIn<span class="vi">Kết nối với kỹ sư Bosch BGSV qua LinkedIn</span></li>
+          <li>Read ETAS blog and Bosch Engineering blog<span class="vi">Đọc blog kỹ thuật của ETAS và Bosch Engineering</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-project">
+      <div class="proj-icon">🚀</div>
+      <div>
+        <h5>Capstone: Mini ECU — Full Automotive Stack</h5>
+        <p>Complete system: STM32 + FreeRTOS + CAN + UDS + AUTOSAR-inspired layered software + C++ modules + unit tests + Python test automation + CI/CD pipeline. README written as professional technical documentation. Demo video. This is your flagship project.<br>
+        <em>Hệ thống đầy đủ: STM32 + FreeRTOS + CAN + UDS + AUTOSAR-layered + C++ + unit test + Python automation + CI/CD. README như tài liệu kỹ thuật thực sự.</em></p>
+      </div>
+    </div>
+    <div class="phase-resources">
+      <span class="resource-label">Read:</span>
+      <span class="resource-tag">🌐 etas.com/en/topics/autosar</span>
+      <span class="resource-tag">🌐 bosch-engineering.com/blog</span>
+      <span class="resource-tag">📘 ISO 26262:2018 Part 6 (software)</span>
+      <span class="resource-tag">🐍 pytest docs – pytest.org</span>
+      <span class="resource-tag">🌐 glassdoor – Bosch BGSV reviews</span>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- PROJECTS -->
+<div id="projects" class="container">
+<div class="section">
+  <div class="section-label">Portfolio building</div>
+  <div class="section-title">8 CV Projects</div>
+  <div class="section-title-vi">8 Dự Án Viết Vào CV</div>
+  <div class="quote-block">Bosch recruiters look at your GitHub. One repo with clear English README, clean code, unit tests, and architecture explanation — that is your real CV. / Nhà tuyển dụng Bosch xem GitHub của bạn. Một repo có README tiếng Anh rõ ràng, code sạch, có test — đó là CV thật sự.</div>
+
+  <div class="projects-grid">
+    <div class="proj-card">
+      <div class="proj-num">Project 01 · Phase 1–2</div>
+      <h3>Bare-Metal GPIO Driver Library</h3>
+      <div class="proj-vi">Thư viện GPIO Driver không dùng HAL</div>
+      <p>Complete GPIO driver for STM32 from registers, no HAL. API designed following AUTOSAR Dio style. Unit tests with Unity. All English.</p>
+      <div class="tags">
+        <span class="tag">C</span><span class="tag">STM32</span><span class="tag">Register-level</span><span class="tag">Unity</span>
+        <span class="cv-badge">★ CV Worthy</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-num">Project 02 · Phase 2</div>
+      <h3>UART Bootloader + Python Flasher</h3>
+      <div class="proj-vi">Bootloader UART + Python tool nạp firmware</div>
+      <p>Bootloader receives new firmware via UART, writes to flash, verifies CRC. Python companion tool sends the binary. Bosch values bootloader knowledge.</p>
+      <div class="tags">
+        <span class="tag">C</span><span class="tag">STM32</span><span class="tag">Flash</span><span class="tag">Python</span>
+        <span class="cv-badge">★ CV Worthy</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-num">Project 03 · Phase 3</div>
+      <h3>CAN Bus Logger &amp; Python Analyzer</h3>
+      <div class="proj-vi">CAN Logger + Python phân tích tín hiệu</div>
+      <p>STM32 logs CAN traffic, parses .dbc signals. Python tool (python-can + cantools) visualizes data in real-time. Can connect to real OBD-II port.</p>
+      <div class="tags">
+        <span class="tag">C</span><span class="tag">CAN</span><span class="tag">Python</span><span class="tag">.dbc</span>
+        <span class="cv-badge">★★ Must Have</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-num">Project 04 · Phase 3</div>
+      <h3>UDS Diagnostic Server</h3>
+      <div class="proj-vi">UDS Diagnostic Server trên STM32</div>
+      <p>UDS server on STM32: session control (0x10), ECU reset (0x11), ReadDataById (0x22), WriteDataById (0x2E). Tested with python-uds scripts.</p>
+      <div class="tags">
+        <span class="tag">C</span><span class="tag">UDS</span><span class="tag">ISO 14229</span><span class="tag">Python</span>
+        <span class="cv-badge">★★ Must Have</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-num">Project 05 · Phase 4</div>
+      <h3>FreeRTOS Vehicle Body Control</h3>
+      <div class="proj-vi">Body Control Module mô phỏng với FreeRTOS</div>
+      <p>Simulates Body Control Module: window, wiper, light. Multi-task FreeRTOS, CAN communication. C++ state machine class. GitHub Actions CI builds automatically.</p>
+      <div class="tags">
+        <span class="tag">FreeRTOS</span><span class="tag">C++</span><span class="tag">CAN</span><span class="tag">CI/CD</span>
+        <span class="cv-badge">★ CV Worthy</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-num">Project 06 · Phase 4–5</div>
+      <h3>Embedded CI/CD Pipeline Demo</h3>
+      <div class="proj-vi">Demo CI/CD Pipeline cho Embedded</div>
+      <p>Integrate Unity + CMock into STM32 project. GitHub Actions or Jenkins pipeline: build → run tests → coverage report. Achieves &gt;80% code coverage.</p>
+      <div class="tags">
+        <span class="tag">Unity</span><span class="tag">Jenkins</span><span class="tag">CI/CD</span><span class="tag">Coverage</span>
+        <span class="cv-badge">★★ Impressive</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-num">Project 07 · Phase 5</div>
+      <h3>AUTOSAR-Inspired CAN Stack</h3>
+      <div class="proj-vi">CAN Stack theo AUTOSAR spec</div>
+      <p>Implement CAN Interface + PDU Router per AUTOSAR API spec (function names, data types, error codes). ARXML description file included. Tests + CI pipeline.</p>
+      <div class="tags">
+        <span class="tag">AUTOSAR</span><span class="tag">C</span><span class="tag">ARXML</span><span class="tag">CanIf</span>
+        <span class="cv-badge">★★ Impressive</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-num">Project 08 · Phase 6 (Capstone)</div>
+      <h3>Mini ECU — Full Automotive Stack</h3>
+      <div class="proj-vi">Mini ECU — Toàn bộ stack ô tô</div>
+      <p>Complete: AUTOSAR-layered + FreeRTOS + CAN + UDS + C++ modules + unit tests + Python automation + CI/CD. English README as technical document. Video demo.</p>
+      <div class="tags">
+        <span class="tag">All Stack</span><span class="tag">AUTOSAR</span><span class="tag">C++</span><span class="tag">Python</span><span class="tag">CI/CD</span>
+        <span class="cv-badge">★★★ Flagship</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- BOOKS -->
+<div id="books" class="container">
+<div class="section">
+  <div class="section-label">Learning Resources</div>
+  <div class="section-title">Books, Docs &amp; Free Resources</div>
+  <div class="section-title-vi">Sách, Tài Liệu &amp; Tài Nguyên Miễn Phí</div>
+
+  <div class="books-grid">
+    <div class="book-card">
+      <span class="book-cat" style="background:rgba(232,177,74,0.12);color:#e8b14a;">C Programming</span>
+      <h4>C Programming: A Modern Approach</h4>
+      <div class="author">K.N. King</div>
+      <p>The best C book for building a solid foundation. Read cover to cover, do all exercises. / Sách C tốt nhất để xây nền tảng. Đọc hết, làm hết bài tập.</p>
+    </div>
+
+    <div class="book-card">
+      <span class="book-cat" style="background:rgba(232,177,74,0.12);color:#e8b14a;">C Advanced</span>
+      <h4>Expert C Programming: Deep C Secrets</h4>
+      <div class="author">Peter van der Linden</div>
+      <p>Explains what C doesn't tell you: memory layout, linker, undefined behavior. / Giải thích những thứ C không nói: memory layout, linker, UB.</p>
+    </div>
+
+    <div class="book-card">
+      <span class="book-cat" style="background:rgba(74,144,232,0.12);color:#4a90e8;">Embedded Core</span>
+      <h4>Making Embedded Systems</h4>
+      <div class="author">Elecia White (O'Reilly)</div>
+      <p>How a real embedded engineer thinks: architecture, state machine, debug, hardware interfaces. / Tư duy kỹ sư embedded thực thụ.</p>
+    </div>
+
+    <div class="book-card">
+      <span class="book-cat" style="background:rgba(74,144,232,0.12);color:#4a90e8;">ARM / STM32</span>
+      <h4>Definitive Guide to ARM Cortex-M3/M4</h4>
+      <div class="author">Joseph Yiu</div>
+      <p>The canonical ARM reference. NVIC, MPU, exception model — cannot skip. / Tài liệu chuẩn về ARM Cortex-M.</p>
+    </div>
+
+    <div class="book-card">
+      <span class="book-cat" style="background:rgba(74,232,160,0.12);color:#4ae8a0;">CAN Protocol</span>
+      <h4>A Comprehensible Guide to CAN</h4>
+      <div class="author">Pfeiffer, Ayre, Keydel</div>
+      <p>Most detailed CAN explanation from physical layer to protocol. Read alongside Phase 3. / Giải thích CAN từ vật lý đến protocol.</p>
+    </div>
+
+    <div class="book-card">
+      <span class="book-cat" style="background:rgba(232,74,106,0.12);color:#e84a6a;">RTOS</span>
+      <h4>Mastering the FreeRTOS Real Time Kernel</h4>
+      <div class="author">Richard Barry — free PDF at freertos.org</div>
+      <p>Written by FreeRTOS creator. Free download at freertos.org. / Tác giả FreeRTOS viết — tải miễn phí.</p>
+    </div>
+
+    <div class="book-card">
+      <span class="book-cat" style="background:rgba(74,144,232,0.12);color:#4a90e8;">C++</span>
+      <h4>Effective Modern C++</h4>
+      <div class="author">Scott Meyers</div>
+      <p>Study only the chapters relevant to embedded: RAII, smart pointers (concept), move semantics. / Học các chương liên quan embedded.</p>
+    </div>
+
+    <div class="book-card">
+      <span class="book-cat" style="background:rgba(180,74,232,0.12);color:#b44ae8;">AUTOSAR</span>
+      <h4>AUTOSAR Specification Documents</h4>
+      <div class="author">AUTOSAR Consortium — free at autosar.org</div>
+      <p>Register as partner at autosar.org to download official spec for free. This is the source of truth. / Đăng ký partner để download spec miễn phí.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 28px;">
+    <div class="section-label" style="margin-bottom:12px;">Key websites / Websites quan trọng nhất</div>
+    <div class="tools-grid">
+      <div class="tool-item">
+        <h4>embetronicx.com</h4>
+        <div class="tool-vi">Tutorial STM32 &amp; AUTOSAR tốt nhất</div>
+        <p>Best free STM32 and AUTOSAR tutorials with code examples</p>
+      </div>
+      <div class="tool-item">
+        <h4>CSS Electronics</h4>
+        <div class="tool-vi">Giải thích CAN chi tiết nhất, miễn phí</div>
+        <p>Most detailed free CAN guide — also covers J1939, CAN FD</p>
+      </div>
+      <div class="tool-item">
+        <h4>freertos.org</h4>
+        <div class="tool-vi">Tài liệu FreeRTOS chính thức + sách miễn phí</div>
+        <p>Official docs, free book, demo projects</p>
+      </div>
+      <div class="tool-item">
+        <h4>autosar.org</h4>
+        <div class="tool-vi">Spec AUTOSAR Classic &amp; Adaptive — đăng ký miễn phí</div>
+        <p>Free official Classic &amp; Adaptive AUTOSAR spec</p>
+      </div>
+      <div class="tool-item">
+        <h4>etas.com</h4>
+        <div class="tool-vi">Blog kỹ thuật Bosch ETAS, trial ISOLAR + RTA-CAR</div>
+        <p>Bosch ETAS technical blog, ISOLAR-A &amp; RTA-CAR trials</p>
+      </div>
+      <div class="tool-item">
+        <h4>godbolt.org</h4>
+        <div class="tool-vi">Xem C code compile thành assembly — rất hữu ích</div>
+        <p>Compiler Explorer — paste C, see the assembly output live</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TOOLS -->
+<div id="tools" class="container">
+<div class="section">
+  <div class="section-label">Hardware &amp; Software</div>
+  <div class="section-title">Required Tools</div>
+  <div class="section-title-vi">Công Cụ Cần Có — Căn cứ theo job posting Bosch thực tế</div>
+
+  <div style="margin-bottom: 24px;">
+    <div class="section-label" style="margin-bottom:10px;">Hardware — buy in priority order / Mua theo thứ tự ưu tiên</div>
+    <div class="tools-grid">
+      <div class="tool-item">
+        <h4>STM32 Nucleo-F446RE</h4>
+        <div class="tool-vi">Board chính — ~$15–25</div>
+        <p>Main board. Cortex-M4, common in automotive education. ST-Link built-in.</p>
+      </div>
+      <div class="tool-item">
+        <h4>SN65HVD230 CAN Transceiver ×2</h4>
+        <div class="tool-vi">Module CAN — ~$2–3/cái, mua 2</div>
+        <p>Required to test real CAN between 2 nodes. ~$2–3 each, buy 2.</p>
+      </div>
+      <div class="tool-item">
+        <h4>USB Logic Analyzer (Saleae clone)</h4>
+        <div class="tool-vi">Phân tích SPI, I2C, CAN waveform — ~$10–15</div>
+        <p>Analyze SPI, I2C, UART, CAN waveforms. Clone ~$10–15, sufficient for learning.</p>
+      </div>
+      <div class="tool-item">
+        <h4>OBD-II Adapter (ELM327)</h4>
+        <div class="tool-vi">Kết nối ô tô thực tế — ~$5–10</div>
+        <p>Connect to real car, read actual CAN traffic. ~$5–10.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div class="section-label" style="margin-bottom:10px;">Software — FREE / Miễn phí hoàn toàn</div>
+    <div class="tools-grid">
+      <div class="tool-item">
+        <h4>VS Code + Extensions</h4>
+        <div class="tool-vi">Phase 1–2: editor chính</div>
+        <p>C/C++ Extension Pack + Cortex-Debug extension. Phase 1–2 main editor.</p>
+      </div>
+      <div class="tool-item">
+        <h4>STM32CubeIDE</h4>
+        <div class="tool-vi">Phase 2+: IDE chính thức ST, miễn phí</div>
+        <p>Official ST IDE from Phase 2. Eclipse-based, has GDB debugger built-in.</p>
+      </div>
+      <div class="tool-item">
+        <h4>arm-none-eabi-gcc</h4>
+        <div class="tool-vi">GNU ARM compiler — bắt buộc từ Phase 2</div>
+        <p>GNU ARM cross-compiler. Used by industry. Free from developer.arm.com.</p>
+      </div>
+      <div class="tool-item">
+        <h4>GDB + OpenOCD</h4>
+        <div class="tool-vi">Debug phần cứng qua SWD</div>
+        <p>Hardware debugging via SWD. Industry-standard debug chain.</p>
+      </div>
+      <div class="tool-item">
+        <h4>Python + python-can + cantools</h4>
+        <div class="tool-vi">Test automation — Bosch dùng nhiều</div>
+        <p>CAN testing and automation. python-can, cantools, python-uds, pytest, pyserial.</p>
+      </div>
+      <div class="tool-item">
+        <h4>Renode / QEMU</h4>
+        <div class="tool-vi">Mô phỏng STM32 không cần hardware</div>
+        <p>Simulate STM32 without hardware — test code faster. Free.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div class="section-label" style="margin-bottom:10px;">Software — Trial / Free Trial (Bosch uses daily)</div>
+    <div class="tools-grid">
+      <div class="tool-item">
+        <h4>ETAS ISOLAR-A</h4>
+        <div class="tool-vi">AUTOSAR tool của Bosch ETAS — Phase 5</div>
+        <p>Bosch ETAS's AUTOSAR configuration tool. Free trial. Phase 5 onwards.</p>
+      </div>
+      <div class="tool-item">
+        <h4>ETAS RTA-CAR</h4>
+        <div class="tool-vi">BSW Runtime của Bosch — dùng hàng ngày tại BGSV</div>
+        <p>Bosch's own AUTOSAR BSW runtime stack. Different from ISOLAR. Try free.</p>
+      </div>
+      <div class="tool-item">
+        <h4>Vector CANoe / CANalyzer</h4>
+        <div class="tool-vi">Tool CAN chuẩn ngành — Bosch dùng hàng ngày</div>
+        <p>Industry-standard CAN tool. Bosch uses daily. 30-day trial available.</p>
+      </div>
+      <div class="tool-item">
+        <h4>Vector DaVinci Developer</h4>
+        <div class="tool-vi">AUTOSAR tool — Bosch dùng song song ETAS</div>
+        <p>AUTOSAR tool Bosch uses alongside ETAS ISOLAR. Concept-level familiarity needed.</p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-label" style="margin-bottom:10px;">CI/CD + Version Control / Kiểm soát phiên bản &amp; CI/CD</div>
+    <div class="tools-grid">
+      <div class="tool-item">
+        <h4>Git + GitHub</h4>
+        <div class="tool-vi">Bắt buộc từ Phase 1 — mọi project phải push</div>
+        <p>Mandatory from Phase 1. Every project must be on GitHub. English commit messages.</p>
+      </div>
+      <div class="tool-item">
+        <h4>GitHub Actions</h4>
+        <div class="tool-vi">CI/CD miễn phí — Phase 4</div>
+        <p>Free CI/CD. Auto-build and test on every push. Start Phase 4.</p>
+      </div>
+      <div class="tool-item">
+        <h4>Jenkins</h4>
+        <div class="tool-vi">CI/CD Bosch dùng trong nội bộ — Phase 5</div>
+        <p>CI/CD tool Bosch uses internally. Set up locally from Phase 5.</p>
+      </div>
+      <div class="tool-item">
+        <h4>GitLab CI</h4>
+        <div class="tool-vi">CI/CD phổ biến tại nhiều team Bosch</div>
+        <p>Widely used at Bosch teams. Learn after Jenkins or instead of.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TIPS -->
+<div id="tips" class="container">
+<div class="section">
+  <div class="section-label">From real Bosch job postings</div>
+  <div class="section-title">Tips &amp; What Bosch BGSV Actually Wants</div>
+  <div class="section-title-vi">Tips &amp; Những Gì Bosch BGSV Thực Sự Muốn</div>
+
+  <div class="important-box">
+    <h4>⚡ Bosch BGSV Vietnam — What you need to know / Điều cần biết</h4>
+    <p>Bosch Global Software Technologies Vietnam (BGSV) in HCMC is a software development center, not manufacturing. The embedded team does BSW generation, AUTOSAR workflow, acceptance testing of third-party software modules, and software validation. They look for people who can <strong>read specs, write clean code, write tests, and communicate in English.</strong><br>
+    <em>BGSV HCMC là trung tâm phát triển phần mềm. Team embedded làm BSW generation, AUTOSAR workflow, acceptance testing, và software validation. Họ tìm người biết đọc spec, code sạch, viết test, và giao tiếp tiếng Anh.</em></p>
+  </div>
+
+  <div class="tip-grid" style="margin-top: 20px;">
+    <div class="tip-card">
+      <h4>🎯 Project-based learning / Học theo dự án</h4>
+      <div class="tip-vi">Học theo dự án, không theo topic</div>
+      <p>Don't study C then MCU then CAN separately. Start projects early, learn what the project needs. You'll remember 10× more than reading books alone. / Bắt đầu project sớm, học những gì project cần.</p>
+    </div>
+    <div class="tip-card">
+      <h4>📖 Read datasheets — daily habit / Đọc datasheet hàng ngày</h4>
+      <div class="tip-vi">Tập đọc datasheet và spec từ sớm</div>
+      <p>Bosch engineers read Reference Manuals every day. Get comfortable with 1000-page PDFs. Practice: don't use tutorials — read the datasheet and code from it. / Kỹ sư Bosch đọc Reference Manual hàng ngày.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🧹 Code quality &gt; code quantity / Chất lượng hơn số lượng</h4>
+      <div class="tip-vi">1 project sạch hơn 10 project copy-paste</div>
+      <p>1 clean project with tests and English README beats 10 copy-paste projects. MISRA-C exists for safety, not to punish — apply it. / MISRA-C không phải để hành mà để code an toàn.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🔌 Use real hardware early / Dùng hardware thật sớm</h4>
+      <div class="tip-vi">Simulator không dạy troubleshoot</div>
+      <p>Simulators don't teach you to troubleshoot. Buy an STM32 Nucleo, wire it up, debug real hardware — those are the skills needed on day 1 of internship. / Mua STM32, nối dây, debug hardware thật.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🐍 Python is a tool, not optional / Python không phải tùy chọn</h4>
+      <div class="tip-vi">Bosch dùng Python cho test automation hàng ngày</div>
+      <p>Bosch uses Python daily for test automation, CAN data analysis, and scripting. You already have Python installed. Use python-can from Phase 3 onward. / Bosch dùng Python mỗi ngày cho test automation.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🌐 English from day one / Tiếng Anh từ ngày đầu</h4>
+      <div class="tip-vi">Mọi thứ ở Bosch bằng tiếng Anh</div>
+      <p>Every variable name, comment, commit message, README, and Bosch meeting is in English. Build the habit now. Writing in English = communicating at Bosch. / Mọi comment, commit message, README phải bằng tiếng Anh.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px;">
+    <div class="section-label" style="margin-bottom: 14px;">Pre-internship checklist — from real Bosch job postings / Checklist trước khi intern Bosch</div>
+    <ul class="checklist">
+      <li>Can explain pointer, volatile, function pointer <strong>in English</strong> without looking at docs<span class="vi">Giải thích được pointer, volatile, function pointer bằng tiếng Anh mà không nhìn tài liệu</span></li>
+      <li>Have written code that talks to hardware from registers (no HAL)<span class="vi">Đã từng viết code giao tiếp phần cứng từ thanh ghi, không dùng HAL</span></li>
+      <li>Have at least 1 working CAN bus project on GitHub<span class="vi">Có ít nhất 1 dự án CAN bus thực tế trên GitHub</span></li>
+      <li>Can use python-can to send and receive CAN frames from PC<span class="vi">Dùng được python-can để gửi/nhận CAN frame từ PC</span></li>
+      <li>Know FreeRTOS: task, queue, semaphore — and can explain WHY they exist<span class="vi">Biết FreeRTOS: task, queue, semaphore — giải thích được tại sao cần chúng</span></li>
+      <li>Know AUTOSAR: what BSW/RTE/SWC are, and why AUTOSAR exists<span class="vi">Biết AUTOSAR là gì, BSW/RTE/SWC là gì, và tại sao AUTOSAR tồn tại</span></li>
+      <li>Have written unit tests for embedded code using Unity<span class="vi">Đã viết unit test cho embedded code dùng Unity</span></li>
+      <li>Have a CI/CD pipeline (GitHub Actions or Jenkins) that auto-builds your code<span class="vi">Có CI/CD pipeline tự động build code</span></li>
+      <li>GitHub profile has 3+ projects with English README<span class="vi">GitHub có 3+ dự án với README tiếng Anh</span></li>
+      <li>Can read a Reference Manual without panic<span class="vi">Đọc được Reference Manual mà không hoảng sợ</span></li>
+      <li>Know ISO 26262 and what ASIL levels mean<span class="vi">Biết ISO 26262 và ASIL levels có ý nghĩa gì</span></li>
+      <li>Can explain your projects in English in a technical interview<span class="vi">Giải thích được dự án bằng tiếng Anh trong phỏng vấn kỹ thuật</span></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Based on <strong>real Bosch BGSV Vietnam job postings</strong>, AUTOSAR official specs, and embedded engineering best practices.</p>
+    <p style="margin-top:4px; font-style:italic; opacity:0.6;">Dựa trên job posting thực tế của Bosch BGSV Vietnam, spec AUTOSAR chính thức, và thực tiễn kỹ thuật embedded.</p>
+    <p style="margin-top: 8px;">Go get Bosch. <strong>You got this.</strong></p>
+  </div>
+</footer>
+
+</body>
+</html>
